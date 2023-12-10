@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace RobbieWagnerGames
 {
@@ -27,7 +28,7 @@ namespace RobbieWagnerGames
         Talk = 14,
     }
 
-    public class UnitAnimator : MonoBehaviour
+    public class UnitAnimator : NetworkBehaviour
     {
 
         [SerializeField] public Animator animator;

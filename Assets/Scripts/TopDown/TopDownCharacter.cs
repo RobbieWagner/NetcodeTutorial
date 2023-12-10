@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using RobbieWagnerGames;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
-public partial class TopDownCharacter : MonoBehaviour
+public partial class TopDownCharacter : NetworkBehaviour
 {
     [SerializeField] Rigidbody2D body;
     [SerializeField] UnitAnimator unitAnimator;
@@ -59,7 +60,7 @@ public partial class TopDownCharacter : MonoBehaviour
 
     private void OnMove(InputAction.CallbackContext context)
     {
-        if(canMove)
+        if(IsOwner && canMove)
         {
             Vector2 input = context.ReadValue<Vector2>();
 
@@ -107,7 +108,12 @@ public partial class TopDownCharacter : MonoBehaviour
 
     private void OnStopMoving(InputAction.CallbackContext context)
     {
-        OnStopMoving();
+        if(IsOwner)
+        {
+            if(moving) OnStopMoving();
+
+            movementVector = Vector2.zero;
+        }
     }
 
     public void OnStopMoving()
@@ -124,50 +130,56 @@ public partial class TopDownCharacter : MonoBehaviour
 
     public void OnStartRun(InputAction.CallbackContext context)
     {
-        running = true;
-        movementSounds?.ToggleRun(true);
-        movementSpeed = currentRunSpeed;
-
-        if(moving)
+        if(IsOwner)
         {
-            if(Mathf.Abs(movementVector.x) > Mathf.Abs(movementVector.y))
+            running = true;
+            movementSounds?.ToggleRun(true);
+            movementSpeed = currentRunSpeed;
+
+            if(moving)
             {
-                if(movementVector.x > 0) 
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.RunRight);
-                else 
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.RunLeft);
-            }
-            else
-            {
-                if(movementVector.y > 0)
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.RunForward);
-                else  
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.RunBack);
+                if(Mathf.Abs(movementVector.x) > Mathf.Abs(movementVector.y))
+                {
+                    if(movementVector.x > 0) 
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.RunRight);
+                    else 
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.RunLeft);
+                }
+                else
+                {
+                    if(movementVector.y > 0)
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.RunForward);
+                    else  
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.RunBack);
+                }
             }
         }
     }
 
     public void OnStopRun(InputAction.CallbackContext context)
     {
-        running = false;
-        movementSounds?.ToggleRun(false);
-        movementSpeed = currentWalkSpeed;
-
-        if(moving)
+        if(IsOwner)
         {
-            if(Mathf.Abs(movementVector.x) > Mathf.Abs(movementVector.y))
+            running = false;
+            movementSounds?.ToggleRun(false);
+            movementSpeed = currentWalkSpeed;
+
+            if(moving)
             {
-                if(movementVector.x > 0) 
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.WalkRight);
-                else 
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.WalkLeft);
-            }
-            else
-            {
-                if(movementVector.y > 0)
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.WalkForward);
-                else  
-                    unitAnimator.ChangeAnimationState(UnitAnimationState.WalkBack);
+                if(Mathf.Abs(movementVector.x) > Mathf.Abs(movementVector.y))
+                {
+                    if(movementVector.x > 0) 
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.WalkRight);
+                    else 
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.WalkLeft);
+                }
+                else
+                {
+                    if(movementVector.y > 0)
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.WalkForward);
+                    else  
+                        unitAnimator.ChangeAnimationState(UnitAnimationState.WalkBack);
+                }
             }
         }
     }
