@@ -52,7 +52,7 @@ public partial class TopDownCharacter : NetworkBehaviour
 
         #region Interaction
         playerInputActions.Movement.Interact.performed += OnInteract;
-        interactablesInRange = new List<IInteractable>();
+        interactablesInRange = new List<INetworkInteractable>();
         #endregion
     }
 

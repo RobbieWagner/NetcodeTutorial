@@ -10,20 +10,21 @@ using Unity.Netcode;
 public partial class TopDownCharacter : NetworkBehaviour
 {
 
-    private List<IInteractable> interactablesInRange;
+    [SerializeField] private List<INetworkInteractable> interactablesInRange;
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        IInteractable interactable = other.GetComponent(typeof(IInteractable)) as IInteractable;
+        INetworkInteractable interactable = other.GetComponent(typeof(INetworkInteractable)) as INetworkInteractable;
         if(interactable != null)
         {
+            Debug.Log("hi");
             interactablesInRange.Add(interactable);
         }
     }
 
     public void OnTriggerExit2D(Collider2D other)
     {
-        IInteractable interactable = other.GetComponent(typeof(IInteractable)) as IInteractable;
+        INetworkInteractable interactable = other.GetComponent(typeof(INetworkInteractable)) as INetworkInteractable;
         if(interactable != null)
         {
             interactablesInRange.Remove(interactable);
