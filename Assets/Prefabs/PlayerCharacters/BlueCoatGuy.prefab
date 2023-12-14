@@ -133,6 +133,7 @@ MonoBehaviour:
   canMove: 0
   hasRecentlyMoved: 0
   movementSounds: {fileID: 0}
+  playerHUDPrefab: {fileID: 7004290112107121176, guid: 742a5881b24ba614995e2fca98c73675, type: 3}
 --- !u!114 &809232748350208873
 MonoBehaviour:
   m_ObjectHideFlags: 0

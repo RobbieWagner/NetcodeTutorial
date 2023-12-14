@@ -29,31 +29,40 @@ public partial class TopDownCharacter : NetworkBehaviour
 
     [SerializeField] public MovementSounds movementSounds;
 
+    [SerializeField] private PlayerHUD playerHUDPrefab;
 
-    private void Awake() 
+    public static TopDownCharacter LocalInstance;
+
+    public override void OnNetworkSpawn() 
     {
-        canMove = true;
-        movementSpeed = defaultWalkSpeed;
-        running = false;
-        hasRecentlyMoved = false;
+        if(IsOwner)
+        {
+            LocalInstance = this;
 
-        unitAnimator = GetComponent<UnitAnimator>();
+            canMove = true;
+            movementSpeed = defaultWalkSpeed;
+            running = false;
+            hasRecentlyMoved = false;
 
-        currentRunSpeed = defaultRunSpeed;
-        currentWalkSpeed = defaultWalkSpeed;
+            unitAnimator = GetComponent<UnitAnimator>();
 
-        playerInputActions = new TopDownPlayerActions();
-        playerInputActions.Enable();
+            currentRunSpeed = defaultRunSpeed;
+            currentWalkSpeed = defaultWalkSpeed;
 
-        playerInputActions.Movement.Move.performed += OnMove;
-        playerInputActions.Movement.Move.canceled += OnStopMoving;
-        playerInputActions.Movement.Run.performed += OnStartRun;
-        playerInputActions.Movement.Run.canceled += OnStopRun;
+            playerInputActions = new TopDownPlayerActions();
+            playerInputActions.Enable();
 
-        #region Interaction
-        playerInputActions.Movement.Interact.performed += OnInteract;
-        interactablesInRange = new List<INetworkInteractable>();
-        #endregion
+            playerInputActions.Movement.Move.performed += OnMove;
+            playerInputActions.Movement.Move.canceled += OnStopMoving;
+            playerInputActions.Movement.Run.performed += OnStartRun;
+            playerInputActions.Movement.Run.canceled += OnStopRun;
+
+            #region Interaction
+            playerInputActions.Movement.Interact.performed += OnInteract;
+            #endregion
+
+            Instantiate(playerHUDPrefab.gameObject);
+        }
     }
 
     private void FixedUpdate() => body.velocity = new Vector2(movementVector.x * movementSpeed, movementVector.y * movementSpeed);
